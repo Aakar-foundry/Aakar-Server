@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
@@ -27,7 +26,7 @@ const userSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String
     },
-    userType: {
+    Role: {
         type: String,
         required: true,
     },
