@@ -85,31 +85,66 @@ exports.register=async(req, res, next)=>{
     }
 }
 
-exports.verifyUser=async(req, res, next)=>{
+exports.verifyEmployee=async(req, res, next)=>{
     try {
-        
+        const {employeeId} = req.params;
+        const {code} = req.body;
+        if(!employeeId || !code){
+            return res.status(400).json({ error: true, message: "Invalide" });
+        }
+        const verificationCode = await VerificationCode.findOne({employeeID:employeeId});
+        if(verificationCode.code !== code){
+            await VerificationCode.deleteOne({employeeID:employeeId});
+            return res.status(400).json({ error: true, message: "Invalide Verification Code" });
+        }
+        await Employee.updateOne({
+            _id:employeeId
+        },{
+            verified:true
+        })
+        return res.status(200).json(success("Employee verified", {id:user._id}))
     } 
     catch (error) {
-        
+        console.log(error);
+        res.status(400).json({ error: true, message: error.message });
     }
     finally{
-        
+
     }
 }
 
-exports.sendOTP=async(req, res, next)=>{
+exports.reSendOTP=async(req, res, next)=>{
     try {
-        
+        const {employeeId} = req.params;
+
+        const employee = await Employee.findOne({_id:employeeId})
+        const generatedOTP = generateOTP(6);
+        await VerificationCode.updateOne(
+            {
+                employee: employeeId
+            }
+            ,{
+            code: generatedOTP
+        })
+
+        const isEmailSent = await sendMail({ email:employee.email, firstName:employee.firstName },NewEmployeeRegisterOTPEmailTemplete(generatedOTP))
+        if (isEmailSent === null) {
+            return res.status(200).json(success("We are failed to send otp. Please try again sending new otp.", { id: employeeId }))
+        }
+
+        return res.status(200).json(success("OTP is send successfully", {id: employeeId}))
+
     }
     catch (error) {
-        
+        console.log(error);
+        res.status(400).json({ error: true, message: error.message });
     }
     finally{
-        
+
     }
 }
 
-exports.forgotPasswordUserVerify=async(req, res, next)=>{
+exports.forgotPasswordEmployeeVerify=async(req, res, next)=>{
     try {
         
     } 
