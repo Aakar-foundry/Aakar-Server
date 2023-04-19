@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-const userSchema = new mongoose.Schema({
+const employeeSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: [true, "Please provide a FirstName"],
@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    verified: {
+        type: Boolean,
+        required: true,
+    },
     dateCreated: {
         type: Date,
         default: Date.now
@@ -45,6 +49,6 @@ userSchema.pre("save", async function (next) {
     next();
 });
 
-const model = mongoose.model("Users", userSchema);
+const model = mongoose.model("Employee", employeeSchema);
 
 module.exports = model;
