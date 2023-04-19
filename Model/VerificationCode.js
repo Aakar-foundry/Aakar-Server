@@ -6,8 +6,13 @@ const VerificationCodeSchema = new mongoose.Schema({
         type: String,
         requied: true
     },
-    dateCreated: {
+    verifyed:{
+        type: Boolean,
+        requied: true
+    },
+    CreatedAt: {
         type: Date,
+        expires: '2m',
         default: Date.now
     },
 })
