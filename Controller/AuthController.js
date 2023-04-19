@@ -1,4 +1,6 @@
-exports.login=()=>{
+const Employee = require("../Model/Employee");
+
+exports.login=async(req, res, next)=>{
     try {
         
     } 
@@ -10,7 +12,7 @@ exports.login=()=>{
     }
 }
 
-exports.register=()=>{
+exports.register=async(req, res, next)=>{
     try {
         
     } 
@@ -22,7 +24,7 @@ exports.register=()=>{
     }
 }
 
-exports.verifyUser=()=>{
+exports.verifyUser=async(req, res, next)=>{
     try {
         
     } 
@@ -34,7 +36,7 @@ exports.verifyUser=()=>{
     }
 }
 
-exports.sendOTP=()=>{
+exports.sendOTP=async(req, res, next)=>{
     try {
         
     }
@@ -46,7 +48,7 @@ exports.sendOTP=()=>{
     }
 }
 
-exports.forgotPasswordUserVerify=()=>{
+exports.forgotPasswordUserVerify=async(req, res, next)=>{
     try {
         
     } 
@@ -58,7 +60,7 @@ exports.forgotPasswordUserVerify=()=>{
     }
 }
 
-exports.forgotPassword=()=>{
+exports.forgotPassword=async(req, res, next)=>{
     try {
         
     } 
