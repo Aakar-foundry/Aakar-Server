@@ -16,7 +16,7 @@ const mailOption =(user,subject,message)=> {
     from: config.GMAIL_ID,
     to: user.email,
     subject: subject,
-    text: `Hi,${user.firstName}\n \t\t ${message}\n\n Regards,\n OIR Team`
+    text: `Hi,${user.firstName}\n \t\t ${message}\n\n Regards,\n Aakar Team`
   };
 }
 

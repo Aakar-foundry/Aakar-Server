@@ -1,7 +1,11 @@
 const { NewEmployeeRegisterOTPEmailTemplete, EmployeeForgotPasswordEmailTemplete } = require("../Helper/EmailReponse");
+const { generateOTP } = require("../Helper/GenerateOTP");
 const { EMPLOYEE } = require("../Helper/Role-Constant");
 const Employee = require("../Model/Employee");
 const VerificationCode = require("../Model/VerificationCode")
+const sendMail = require("../Services/EmailServices")
+const {success} = require("../Helper/Response")
+const bcrypt = require('bcrypt')
 
 exports.login = async (req, res, next) => {
     try {
@@ -14,10 +18,10 @@ exports.login = async (req, res, next) => {
         }
         const employee = await Employee.findOne({ email });
         if (!employee) {
-            return res.status(400).json({ error: true, message: "User doesn't exist" });
+            return res.status(400).json({ error: true, message: "Employee doesn't exist" });
         }
         if (!employee.verified) {
-            return res.status(400).json({ error: true, message: "User is not verified" });
+            return res.status(400).json({ error: true, message: "Employee is not verified" });
         }
         const isMatch = await bcrypt.compare(password, employee.password);
         if (!isMatch) {
@@ -42,7 +46,7 @@ exports.login = async (req, res, next) => {
         res.status(400).json({ error: true, message: error.message });
     }
     finally {
-        console.log("Checked in employee : " + email);
+        
     }
 }
 
@@ -75,14 +79,14 @@ exports.register = async (req, res, next) => {
         if (isEmailSent === null) {
             return res.status(200).json(success("Employee is register successfully but we are facing some email issue. Please try to login and verify your account.", { id: employee._id }))
         }
-        return res.status(200).json(success("Employee is register successfully", { id: user._id }))
+        return res.status(200).json(success("Employee is register successfully", { id: employee._id }))
     }
     catch (error) {
         console.log(error);
         res.status(400).json({ error: true, message: error.message });
     }
     finally {
-        console.log("Checked in employee : " + email);
+        
     }
 }
 
@@ -94,7 +98,8 @@ exports.verifyEmployee = async (req, res, next) => {
             return res.status(400).json({ error: true, message: "Invalide" });
         }
         const verificationCode = await VerificationCode.findOne({ employeeID: employeeId });
-        if (!verificationCode.CreatedAt) {
+        console.log(verificationCode)
+        if (verificationCode === null) {
             return res.status(400).json({ error: true, message: "Verification Code expried" });
         }
         if (verificationCode.code !== code) {
@@ -135,8 +140,7 @@ exports.reSendOTP = async (req, res, next) => {
                 code: generatedOTP,
                 verifyed: false
             })
-
-        const isEmailSent = await sendMail({ email: employee.email, firstName: employee.firstName }, NewEmployeeRegisterOTPEmailTemplete(generatedOTP))
+        const isEmailSent = await sendMail({ email: employee.email, firstName: employee.firstName }, NewEmployeeRegisterOTPEmailTemplete(generatedOTP),"Verification OTP")
         if (isEmailSent === null) {
             return res.status(200).json(success("We are failed to send otp. Please try again sending new otp.", { id: employeeId }))
         }
@@ -194,10 +198,7 @@ exports.forgotPassword = async (req, res, next) => {
         if (!newPassword || !rePassword) {
             return res.status(400).json({ error: true, message: "Invalid data" });
         }
-        const verificationCode = await VerificationCode.findOne({employeeID:employeeID});
-        if(!verificationCode.verifyed){
-            return res.status(400).json({ error: true, message: "User is not verified" });
-        }
+        
         const salt = await bcrypt.genSalt(10);
         const hashpassword = await bcrypt.hash(newPassword, salt);
         await Employee.updateOne({ _id: employeeID }, { password: hashpassword })
