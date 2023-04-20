@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Aakar Fountry server",
   "main": "index.js",
+  "type":"commonjs",
   "scripts": {
     "start": "node index.js",
     "build": "webpack --env production --env VERCEL_ENV=$VERCEL_ENV",
