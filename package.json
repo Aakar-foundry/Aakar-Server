@@ -5,8 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "webpack --env production --env VERCEL_ENV=$VERCEL_ENV",
+    "postinstall": "npm i @vercel/node-bridge",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
