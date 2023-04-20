@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
 
 const employeeSchema = new mongoose.Schema({
     firstName: {
@@ -39,7 +40,7 @@ const employeeSchema = new mongoose.Schema({
         default: Date.now
     },
 })
-userSchema.pre("save", async function (next) {
+employeeSchema.pre("save", async function (next) {
     if (!this.isModified("password")) {
         next();
     }
